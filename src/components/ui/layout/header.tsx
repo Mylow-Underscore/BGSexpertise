@@ -3,8 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import {
   motion,
-  useInView,
-  useAnimation,
   AnimatePresence,
   useScroll,
   useTransform,
@@ -14,7 +12,6 @@ import {
 export default function Header() {
   const [scrolled, setScrolled]     = useState(false);
   const [menuOpen, setMenuOpen]     = useState(false);
-  const [loaded, setLoaded]         = useState(false);
 
   const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
@@ -35,38 +32,39 @@ export default function Header() {
     <header className="">
       <nav className="">
         <motion.nav
-            className={`fixed top-0 left-0 right-0 z-50 px-6 transition-all duration-300 ${scrolled ? "border-b" : ""}`}
-            style={{ background: scrolled ? "rgba(250,247,240,0.97)" : "transparent", backdropFilter: scrolled ? "blur(8px)" : "none", borderColor: scrolled ? "#EDE8DB" : "transparent" }}
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-foreground backdrop-blur-md border-b border-[#EDE8DB]" : "bg-transparent"}`}
+            style={{ background: scrolled ? "var(--background)" : "transparent", backdropFilter: scrolled ? "blur(8px)" : "none", borderColor: scrolled ? "var(--accent)" : "transparent" }}
             initial={{ y: -80, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
+            animate={{ y: 0, opacity: 0.92 }}
             transition={{ duration: 0.7, delay: 2.2, ease: [0.22, 1, 0.36, 1] }}
         >
-            <div className="max-w-6xl mx-auto flex items-center justify-between h-16">
+            <div className="max-w-6xl mx-auto flex items-center justify-between h-16 text-sm font-medium px-4 md:px-8">
             <button
                 onClick={() => scrollTo("hero")}
                 className="text-lg font-bold tracking-wide transition-colors duration-300"
                 style={{ fontFamily: "'Playfair Display', serif", color: scrolled ? "#5C6B2E" : "#ffffff" }}
             >
-                Cuisine d'ici et là
+                BGS EXPERTISE
             </button>
 
             <div className="hidden md:flex items-center gap-8">
-                {["Accueil", "À propos", "Carte", "Contact"].map((label, i) => {
-                const ids = ["hero", "apropos", "carte", "contact"];
-                return (
+                {[
+                  { label: "Acceuil", id: "hero" },
+                  { label: "Nos services", id: "services" },
+                  { label: "À Propos", id: "about" },
+                ].map(({ label, id }) => (
                     <button
-                    key={label}
-                    onClick={() => scrollTo(ids[i])}
-                    className="text-xs font-bold uppercase tracking-widest transition-colors duration-200"
-                    style={{ color: scrolled ? "#6B6660" : "rgba(255,255,255,0.8)" }}
+                        key={label}
+                        onClick={() => scrollTo(id)}
+                        className="cursor-pointer text-xs font-bold uppercase tracking-widest transition-colors duration-200"
+                        style={{ color: scrolled ? "#6B6660" : "rgba(255,255,255,0.8)" }}
                     >
-                    {label}
+                        {label}
                     </button>
-                );
-                })}
-                <a href="tel:0468786883" className="bg-[#C97B3A] hover:bg-[#b5692a] text-white text-xs font-bold uppercase tracking-wider px-5 py-2 rounded transition-colors">
-                Réserver
-                </a>
+                ))}
+                <motion.button onClick={() => scrollTo("contact")} className="bg-[#1E1C17] hover:bg-[#5C6B2E] text-white text-xs font-bold uppercase tracking-wider px-5 py-2 rounded transition-colors cursor-pointer">
+                    Contact
+                </motion.button>
             </div>
 
             <button className="md:hidden flex flex-col gap-1.5 p-2" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
@@ -90,17 +88,18 @@ export default function Header() {
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.28 }}
                 >
-                {["Accueil", "À propos", "Carte", "Contact"].map((label, i) => {
-                    const ids = ["hero", "apropos", "carte", "contact"];
-                    return (
-                    <button key={label} onClick={() => scrollTo(ids[i])} className="text-sm font-bold uppercase tracking-widest text-left text-[#6B6660]">
+                {[
+                    { label: "Accueil", id: "hero" },
+                    { label: "À propos", id: "apropos" },
+                    { label: "Carte", id: "carte" },
+                ].map(({ label, id }) => (
+                    <button key={label} onClick={() => scrollTo(id)} className="text-sm font-bold uppercase tracking-widest text-left text-[#6B6660]">
                         {label}
                     </button>
-                    );
-                })}
-                <a href="tel:0468786883" className="bg-[#C97B3A] text-white text-sm font-bold uppercase tracking-wider px-5 py-2 rounded text-center">
-                    Réserver — 04 68 78 68 83
-                </a>
+                ))}
+                <motion.button onClick={() => scrollTo("contact")} className="bg-[#1E1C17] hover:bg-[#5C6B2E] text-white text-xs font-bold uppercase tracking-wider px-5 py-2 rounded transition-colors cursor-pointer">
+                    Contact
+                </motion.button>
                 </motion.div>
             )}
             </AnimatePresence>
@@ -109,3 +108,4 @@ export default function Header() {
     </header>
   )
 }
+
